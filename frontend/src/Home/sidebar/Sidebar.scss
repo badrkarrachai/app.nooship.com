@@ -1,0 +1,328 @@
+@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800;900&display=swap');
+.sidebar {
+
+    position: fixed;
+    top: 0;
+    left: 0;
+    height: 100vh;
+    width: 302px;
+    background-color: #F8F8F9;
+  
+
+    &__logo {
+        display: grid;
+        place-items: center;
+        padding: 20px 50px 0px 50px;
+        font-weight: 900;
+        font-size: 2.5rem;
+        font-weight: 600;
+        font-family: 'Poppins', sans-serif;
+        background: linear-gradient(to right, #00d0ff,
+  #ff0091, #00d0ff, #ff0091);
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+    }
+
+    &__menu {
+        position: relative;
+        
+        &__item {
+            display: flex;
+            align-items: center;
+            place-content: flex-start;
+            padding: 1.4rem 3rem;
+            font-size: 1.25rem;
+            font-family: 'Poppins', sans-serif;
+            color: #A9A9AD;
+            transition: color 0.3s ease-in-out;
+            &:hover {
+                color: #1D1D27; /* Change the color on hover */
+            }
+            &.active {
+                color: #1D1D27;
+            }
+
+            &__icon {
+                margin-right: 1rem;
+
+                i {
+                    font-size: 1.75rem;
+                    
+                }
+            }
+            &__text{
+                font-size: 1.1rem;
+                font-weight: 500;
+            }
+        }
+
+        &__indicator {
+            position: absolute;
+            top: 0;
+            left: 50%;
+            
+            width: calc(100% - 40px);
+            border-radius: 10px;
+            background-color: #EBEBEB;
+            z-index: -1;
+            transform: translateX(-50%);
+            transition: 0.2s ease-in-out;
+        }
+    }
+}
+.rootPageHome{
+    padding: 0px 0px 0px 296px;
+}
+.smallLogo{
+    display: none;
+}
+.makeprofilecenter{
+    display: none;
+    margin-left: auto;
+          margin-right: auto;
+  }
+@media (max-width: 1440px) {
+    .sortByCardHolder{
+        padding-left: 20%;
+      }
+    .sidebar {
+        border-right-width: 1px;
+        border-color: rgba(29,29,39,.1);
+        position: fixed;
+        top: 0;
+        left: 0;
+        height: 100vh;
+        width: 100px;
+        background-color: #F8F8F9;
+      
+    
+        &__logo {
+            display: none;
+
+            place-items: center;
+            padding: 20px 50px 0px 50px;
+            font-weight: 900;
+            font-size: 2.5rem;
+            font-weight: 600;
+            font-family: 'Poppins', sans-serif;
+            background: linear-gradient(to right, #00d0ff,
+      #ff0091, #00d0ff, #ff0091);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+    
+        &__menu {
+            position: relative;
+            
+            &__item {
+                display: flex;
+                align-items: center;
+                place-content: flex-start;
+                padding: 1.4rem 2.3rem;
+                font-size: 1.25rem;
+                font-family: 'Poppins', sans-serif;
+                color: #A9A9AD;
+                transition: color 0.3s ease-in-out;
+                &:hover {
+                    color: #1D1D27; /* Change the color on hover */
+                }
+                &.active {
+                    color: #1D1D27;
+                }
+    
+                &__icon {
+                    margin-right: 1rem;
+    
+                    i {
+                        font-size: 1.75rem;
+                        
+                    }
+                }
+                &__text{
+                    font-size: 1.1rem;
+                    font-weight: 500;
+                    display: none;
+                }
+            }
+    
+            &__indicator {
+                position: absolute;
+                top: 0;
+                left: 50%;
+                
+                width: calc(100% - 40px);
+                border-radius: 10px;
+                background-color: #EBEBEB;
+                z-index: -1;
+                transform: translateX(-50%);
+                transition: 0.2s ease-in-out;
+            }
+        }
+    }
+    .rootPageHome{
+        padding: 0px 0px 0px 84px;
+    }
+    .hiderforprofile{
+        display: none !important;
+    }
+    .smallLogo{
+        display: inline;
+        width: 40px;
+        height: 40px;
+        margin-top: 30px;
+        margin-left: auto;
+        margin-right: auto;
+    }
+    .makeprofilecenter{
+        display: inline;
+        margin-left: auto;
+              margin-right: auto;
+              
+      }
+      
+  }
+  .put-in-center{
+    margin-left: auto;
+    margin-right: auto;
+  }
+  .slide-infirst {
+    animation: slideInFromLeft 0.3s ease-in-out forwards;
+  }
+  .slide-in {
+    animation: slideInFromLeft 0.5s ease-in-out forwards;
+  }
+  .slide-inlast {
+    animation: slideInFromLeft 0.7s ease-in-out forwards;
+  }
+  
+  @keyframes slideInFromLeft {
+    0% {
+      transform: translateX(-100%);
+      opacity: 0;
+    }
+    100% {
+      transform: translateX(0);
+      opacity: 1;
+    }
+  }
+
+  .slide-inFromRight {
+    animation: slideInFromRight 0.3s ease-in-out forwards;
+    
+    
+  }
+  
+  @keyframes slideInFromRight {
+    0% {
+      transform: translateX(5%);
+      opacity: 0;
+    }
+    100% {
+      transform: translateX(0);
+      opacity: 1;
+    }
+  }
+  .sidebar1{
+    display: none;
+    
+  }
+  .BackMenuSide345{
+    display: none;
+  }
+@media (max-width: 1024px) {
+    .BackMenuSide345{
+        display: inline;
+      }
+    .sidebar1{
+        height: 100%;
+        display: flex;
+        flex-direction: column;
+        justify-content: space-between; 
+      }
+    .sidebar1 {
+
+        position: fixed;
+        top: 0;
+        left: 0;
+        height: 100vh;
+        width: 302px;
+        background-color: #FFFFFF;
+        z-index: 99999;
+    
+        &__logo {
+            
+            display: grid;
+            place-items: center;
+            padding: 20px 50px 0px 50px;
+            font-weight: 900;
+            font-size: 2.5rem;
+            font-weight: 600;
+            font-family: 'Poppins', sans-serif;
+            background: linear-gradient(to right, #00d0ff,
+      #ff0091, #00d0ff, #ff0091);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+    
+        &__menu {
+            position: relative;
+            
+            &__item {
+                display: flex;
+                align-items: center;
+                place-content: flex-start;
+                padding: 1.4rem 3rem;
+                font-size: 1.25rem;
+                font-family: 'Poppins', sans-serif;
+                color: #A9A9AD;
+                transition: color 0.3s ease-in-out;
+                &:hover {
+                    color: #1D1D27; /* Change the color on hover */
+                }
+                &.active {
+                    color: #1D1D27;
+                }
+    
+                &__icon {
+                    margin-right: 1rem;
+    
+                    i {
+                        font-size: 1.75rem;
+                        
+                    }
+                }
+                &__text{
+                    font-size: 1.1rem;
+                    font-weight: 500;
+                    display: inline !important;
+                }
+            }
+    
+            &__indicator {
+                position: absolute;
+                top: 0;
+                left: 50%;
+                width: calc(100% - 40px);
+                border-radius: 10px;
+                background-color: #EBEBEB;
+                z-index: -1;
+                transform: translateX(-50%);
+                transition: 0.2s ease-in-out;
+            }
+        }
+    }
+    .rootPageHome{
+        padding: 0px 0px 0px 296px;
+    }
+    .smallLogo{
+        display: none;
+    }
+    .makeprofilecenter{
+        display: none;
+        margin-left: auto;
+              margin-right: auto;
+      }
+      .hiderforprofile{
+        display: flex !important;
+    }
+}
