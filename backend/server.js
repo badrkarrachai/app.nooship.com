@@ -339,7 +339,7 @@ app.post("/sendVerCodeAndGetCode", async (req,res)=>{
         },
     });
     // Read the HTML file
-    let htmlContent = fs.readFileSync('emailTemplate.html', 'utf-8');
+    let htmlContent = fs.readFileSync('html_templates/emailTemplate.html', 'utf-8');
 
     // Generate a random 6-digit verification code
     const verificationCode = generateVerificationCode();
