@@ -18,7 +18,7 @@ export default function AuthProvider() {
         }
       })
       .catch((error) => {
-        console.error("Error checking authentication status:", error);
+        console.log("Somthing went wrong!");
       });
   }, []);
   return isAuth === "true" ? <Outlet /> : <Navigate to="/Login" />;

@@ -20,7 +20,7 @@ var Client = coinbase.Client;
 var resources = coinbase.resources;
 var Webhook = coinbase.Webhook;
 
-Client.init(process.env.AWS_CLIENT);
+Client.init(process.env.COINBASE_CLIENT);
 
 
 const app = express();
@@ -140,10 +140,10 @@ app.post('/upload_profile_image_new', upload.single('newimage'), async (req, res
         });
 
     } catch (error) {
-        console.log(error);
         return res.json("Something went wrong!");
     }}
   });
+
 
 
 
@@ -162,11 +162,12 @@ app.post("/checout_balance",async(req,res)=>{
             pricing_type: "fixed_price",
             metadata:{
                 user_id: req.session.user.Id,
+                price: amount
             },
         });
-        res.send({charged:true,message: charge})
+        return res.send({charged:true,message: charge})
     } catch (err) {
-        res.send({charged:false})
+        return res.send({charged:false})
     }
     }
 }) 
@@ -175,37 +176,38 @@ app.post("/checout_balance",async(req,res)=>{
 app.post("/webhooks", async (req,res)=>{
     try{
         const event = Webhook.verifyEventBody(
-            req.rawBody,
-            req.headers["x-cc-webhook-signature"],
-            "875c4ddb-7b79-400c-96b6-af15b8354728"
+            JSON.stringify(req.body),
+            req.headers['x-cc-webhook-signature'],
+            process.env.COINBASE_WEBHOOK_SECRET
         )
         if(event.type === "charge:confirmed"){
-            let amount = event.data.pricing.local.amount;
+            let amount = event.data.metadata.price;
             let userId = event.data.metadata.user_id;
             let notification = {title: "Payment successfully received",
                                 notification: `The payment you made with ${amount} USD has been successfully added to your wallet.`
                                 }
             const sql = "UPDATE users SET Balance = Balance + ? WHERE Id = ? ; INSERT INTO `notifications`(`IdUser`, `TitleNotification`, `Notification`) VALUES (?,?,?) ; INSERT INTO `payments`(`idUser`, `Type`, `paymentPrice`) VALUES (?,?,?)"
             db.query(sql,[amount,userId, userId,notification.title,notification.notification, userId,"Wallet",amount],(err,data)=>{
-                if(err) res.status(500).json({error: err})
+                if(err) return res.status(500).json({error: err})
             });
-            res.sendStatus(200);
+            
         }
 
         if(event.type === "charge:failed"){
-            let amount = event.data.pricing.local.amount;
+            let amount = event.data.metadata.price;
             let userId = event.data.metadata.user_id;
             let notification = {title: "Payment failed",
                                 notification: `The payment you made with ${amount} USD has been failed, please try again or call support for any issues.`
                                 }
             const sql = "INSERT INTO `notifications`(`IdUser`, `TitleNotification`, `Notification`) VALUES (?,?,?)"
             db.query(sql,[userId,notification.title,notification.notification],(err,data)=>{
-                if(err) res.status(500).json({error: err})
+                if(err) return res.status(500).json({error: err})
             });
-            res.sendStatus(200);
+            
         }
+        return res.sendStatus(200);
     }catch(err){
-        res.status(500).json({
+        return res.status(500).json({
             error: err
         })
     }
@@ -220,10 +222,11 @@ app.get("/isLogged", async (req,res)=>{
     }
 })
 
-//Is Logged
-app.get("/", async (req,res)=>{
-    res.send("Hello World")
-})
+// //Is Logged
+// app.get("/", async (req,res)=>{
+//     res.send("Hello World")
+// })
+
 //LogOut
 app.get("/logout", (req, res) => {
     // Destroy the session to log the user out

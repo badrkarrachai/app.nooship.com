@@ -24,7 +24,6 @@ function Login() {
   const [password, setPassword] = useState("");
   const [Erroremail, setErrorEmail] = useState("");
   const [Errorpassword, setErrorPassword] = useState("");
-  const [user, setuser] = useState("");
 
   const handleInputChangeEmail = (event) => {
     setEmail(event.target.value);

@@ -146,13 +146,20 @@ function Payments() {
 
   const handleInputChange = (event) => {
     const inputText = event.target.value;
-    // Use a regular expression to remove non-numeric characters
-    const numericValue = inputText.replace(/[^0-9]/g, "");
 
-    // Check if the numeric value is within the range [1, 255]
+    // Use a regular expression to remove non-numeric and non-dot characters
+    const numericValue = inputText.replace(/[^0-9.]/g, "");
+
+    // Check if the numeric value is within the range [1, 1000000]
     if (numericValue === "" || (numericValue >= 1 && numericValue <= 1000000)) {
       // Update the state with the numeric value
-      setPrice(numericValue === "" ? "" : parseInt(numericValue, 10));
+      setPrice(
+        numericValue === ""
+          ? ""
+          : numericValue.includes(".")
+          ? numericValue
+          : parseFloat(numericValue, 10)
+      );
     }
   };
   const [payments, setPayments] = useState([]);
@@ -258,20 +265,7 @@ function Payments() {
       dispatch(setUpdateBalance(false));
     }
   }, [UpdateBalance]);
-  function ImageProcess(image) {
-    if (image === null) {
-      return "https://i.pinimg.com/originals/36/fa/7b/36fa7b46c58c94ab0e5251ccd768d669.jpg";
-    }
-    const buff = image;
-    const base64Image = `data:image/jpeg;base64,${Buffer.from(buff).toString(
-      "base64"
-    )}`;
-    if (base64Image === "data:image/jpeg;base64,") {
-      return "https://i.pinimg.com/originals/36/fa/7b/36fa7b46c58c94ab0e5251ccd768d669.jpg";
-    } else {
-      return base64Image;
-    }
-  }
+
   const dateFix = (datePayment) => {
     const dateObject = new Date(datePayment);
 
