@@ -16,6 +16,8 @@ import { Last } from "react-bootstrap/esm/PageItem";
 import { Ring } from "@uiball/loaders";
 import { ToastContainer, toast } from "react-toastify";
 import { setLoadingFalse } from "../redux/LoadingStataus";
+import ReCAPTCHA from "react-google-recaptcha";
+
 function TermsAndConditions({ status }) {
   const [isHovered, setIsHovered] = useState(false);
   const handleMouseEnter = () => {
@@ -170,6 +172,9 @@ function Register() {
   const navigate = useNavigate();
   const dispatch = useDispatch();
   const [isLoading, setIsLoading] = useState(false);
+  const [isCaptchaShowen, setIsCaptchaShowen] = useState(false);
+  const [isCaptchaDone, setIsCaptchaDone] = useState(false);
+  const [isCaptchaError, setIsCaptchaError] = useState(false);
 
   let isAuth = localStorage.getItem("LogStatus");
   if (isAuth === "true") {
@@ -310,6 +315,12 @@ function Register() {
     } else {
       setIsCheckedst(false);
     }
+    if (isCaptchaDone === false) {
+      pass = false;
+      setIsCaptchaError(true);
+    } else {
+      setIsCaptchaError(false);
+    }
     if (pass) {
       const email2 = validateEmail(email).message.toString();
       const firstName1 = validateName(firstName).message.toString();
@@ -395,6 +406,20 @@ function Register() {
       </div>
     );
   }
+  //Recaptcha
+  function onChange(value) {
+    if (value !== "") {
+      setIsCaptchaDone(true);
+      setIsCaptchaError(false);
+    } else {
+      setIsCaptchaDone(false);
+      setIsCaptchaError(true);
+    }
+  }
+
+  useEffect(() => {
+    isChecked ? setIsCaptchaShowen(true) : setIsCaptchaShowen(false);
+  }, [isChecked]);
   return (
     <React.Fragment>
       {Loading === true ? <LoadingWithProgressBar /> : ""}
@@ -603,6 +628,27 @@ function Register() {
                         </span>
                       </button>
                     </div>
+                    {isCaptchaShowen && (
+                      <div
+                        style={{
+                          display: "flex",
+                          justifyContent: "center",
+                        }}
+                      >
+                        <div
+                          style={
+                            isCaptchaError
+                              ? { border: "2px solid", borderColor: "red" }
+                              : {}
+                          }
+                        >
+                          <ReCAPTCHA
+                            sitekey="6LdhxwEpAAAAAOpfMo2kHr1g0e3rigLhBa3HnNEY"
+                            onChange={onChange}
+                          />
+                        </div>
+                      </div>
+                    )}
                     {isLoading && (
                       <div
                         style={{
