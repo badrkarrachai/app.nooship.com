@@ -3,7 +3,10 @@ import {
   ExpectedParcelEditeReducer,
   RightBarStatusReducer,
 } from "./RightBarStatus";
-import { NotificationBarStatusReducer } from "./NotificationbarStatus";
+import {
+  NotificationBarStatusReducer,
+  NotificationDotStatusReducer,
+} from "./NotificationbarStatus";
 import { VerCodeReducer } from "./VerficationCode";
 import { PageReducer } from "./AuthData";
 import {
@@ -50,5 +53,6 @@ export const store = configureStore({
     CominFromRightBar: CominFromRightBarReducer,
     Balance: BalanceReducer,
     UpdateBalance: UpdateBalanceReducer,
+    NotificationDotStatus: NotificationDotStatusReducer,
   },
 });

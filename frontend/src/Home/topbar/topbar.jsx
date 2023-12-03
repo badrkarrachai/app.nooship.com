@@ -1,4 +1,4 @@
-import React, { useEffect } from "react";
+import React, { useEffect, useState } from "react";
 import { LuWallet2 } from "react-icons/lu";
 import { BiShoppingBag } from "react-icons/bi";
 import { FaRegBell } from "react-icons/fa";
@@ -8,12 +8,15 @@ import { IoIosArrowForward } from "react-icons/io";
 import { Link } from "react-router-dom";
 import { useNavigate } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
-import { setToActiveNotification } from "../../redux/NotificationbarStatus";
+import {
+  setToActiveNotification,
+  setToInActiveNotificationDot,
+} from "../../redux/NotificationbarStatus";
 import Sidebar from "../sidebar/Sidebar";
 import { setToActiveSide, setToInActiveSide } from "../../redux/SideBarStatus";
 import { setBalance, setUpdateBalance } from "../../redux/Balance";
 import axios from "axios";
-import baseURL from "../../config";
+import config from "../../config";
 
 function Topbar({ currentPage, oldPage }) {
   const navigate = useNavigate();
@@ -28,11 +31,17 @@ function Topbar({ currentPage, oldPage }) {
   };
   const Balance = useSelector((state) => state.Balance.value);
   const UpdateBalance = useSelector((state) => state.UpdateBalance.value);
+  const NotificationDotStatus = useSelector(
+    (state) => state.NotificationDotStatus.value
+  );
   const getBlance = async () => {
     try {
-      const response = await axios.get(`${baseURL}/get_user_balance_mership`, {
-        withCredentials: true, // Include credentials (cookies) with the request
-      });
+      const response = await axios.get(
+        `${config.baseURL}/get_user_balance_mership`,
+        {
+          withCredentials: true, // Include credentials (cookies) with the request
+        }
+      );
       if (response.data !== "Something went wrong!") {
         dispatch(setBalance(response.data.balance));
       } else {
@@ -66,6 +75,41 @@ function Topbar({ currentPage, oldPage }) {
     }
     getBlance();
   }, [UpdateBalance]);
+
+  const [notificationsDot, setNotificationsDot] = useState(0);
+
+  useEffect(() => {
+    const getnotificationsDot = async () => {
+      try {
+        const response = await axios.get(
+          `${config.baseURL}/get_all_notifications_count`,
+          {
+            withCredentials: true, // Include credentials (cookies) with the request
+          }
+        );
+
+        if (response.data.Exist) {
+          setNotificationsDot(response.data.message);
+        }
+      } catch (error) {
+        // toast.error("Something went wrong!", {
+        //   position: "top-right",
+        //   autoClose: 2000,
+        //   hideProgressBar: false,
+        //   closeOnClick: true,
+        //   pauseOnHover: true,
+        //   draggable: true,
+        //   progress: undefined,
+        //   theme: "colored",
+        // });
+        // console.log("Getting addresses failed:", error.response.data.error);
+      }
+    };
+    getnotificationsDot();
+    if (NotificationDotStatus === "true") {
+      dispatch(setToInActiveNotificationDot());
+    }
+  }, [NotificationDotStatus]);
   return (
     <React.Fragment>
       <div className="upupbar flex justify-between flex-col pb-5 bg-base-1 divide-y-2 divide-gray-100 shadow-[0px_4px_20px_rgba(0,0,0,0.05)] mb-6">
@@ -128,6 +172,18 @@ function Topbar({ currentPage, oldPage }) {
                   type="submit"
                   onClick={() => dispatch(setToActiveNotification())}
                 >
+                  {notificationsDot !== 0 ? (
+                    <div
+                      className="red-dot"
+                      style={{
+                        position: "absolute",
+                        marginTop: "-15px",
+                        marginRight: "-15px",
+                      }}
+                    ></div>
+                  ) : (
+                    ""
+                  )}
                   <FaRegBell size={"17px"} />
                 </button>
               </div>

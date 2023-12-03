@@ -11,7 +11,7 @@ import Cookies from "universal-cookie";
 import { ToastContainer, toast } from "react-toastify";
 
 import axios from "axios";
-import baseURL from "../../../config";
+import config from "../../../config";
 import SelectPulie from "../../Components/SelectPulie";
 import countryData from "../../../data/countries";
 import { useDispatch, useSelector } from "react-redux";
@@ -226,7 +226,7 @@ function Profil() {
           setIsLoading(true);
 
           const response = await axios.post(
-            `${baseURL}/update_user_data_mership2023`,
+            `${config.baseURL}/update_user_data_mership2023`,
             {
               firstName1,
               lastName1,
@@ -354,7 +354,7 @@ function Profil() {
       try {
         setIsLoadingImageUpload(true);
         const response = await axios.post(
-          `${baseURL}/upload_profile_image_new`,
+          `${config.baseURL}/upload_profile_image_new`,
           formData, // Use the FormData object for sending the request
           {
             withCredentials: true,
@@ -423,9 +423,12 @@ function Profil() {
     const userCookie = cookies.get("xml");
     if (userCookie.Image !== "") {
       try {
-        const response = await axios.get(`${baseURL}/delete_User_image`, {
-          withCredentials: true,
-        });
+        const response = await axios.get(
+          `${config.baseURL}/delete_User_image`,
+          {
+            withCredentials: true,
+          }
+        );
         if (response.data.status === "Done") {
           userCookie.Image = response.data.userImage;
           cookies.set("xml", userCookie, { path: "/" });

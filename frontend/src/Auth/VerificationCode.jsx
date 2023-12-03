@@ -5,7 +5,7 @@ import InputPulie from "../Home/Components/InputPulie";
 import { Navigate, useNavigate } from "react-router-dom";
 import { useSelector, useDispatch } from "react-redux";
 import { setPage } from "../redux/AuthData";
-import baseURL from "../config";
+import config from "../config";
 import axios from "axios";
 import { ToastContainer, toast } from "react-toastify";
 
@@ -57,7 +57,7 @@ function VerificationCode() {
         localStorage.setItem("Password", "");
         async function CreateAccount() {
           await axios
-            .post(`${baseURL}/CreateAccountMership239`, {
+            .post(`${config.baseURL}/CreateAccountMership239`, {
               FirstName,
               LastName,
               Email,
@@ -99,7 +99,7 @@ function VerificationCode() {
       email.split(" ").join("") !== ""
     ) {
       await axios
-        .post(`${baseURL}/sendVerCodeAndGetCode`, { email, firstName1 })
+        .post(`${config.baseURL}/sendVerCodeAndGetCode`, { email, firstName1 })
         .then((res) => {
           if (res.data.Sent) {
             setVerCode(res.data.verCode);

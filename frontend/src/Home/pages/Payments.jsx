@@ -8,7 +8,7 @@ import { HiClipboardDocumentList } from "react-icons/hi2";
 import { BsExclamationCircle } from "react-icons/bs";
 import { ToastContainer, toast } from "react-toastify";
 import axios from "axios";
-import baseURL from "../../config";
+import config from "../../config";
 import countryData from "../../data/countries";
 import { Buffer } from "buffer";
 import Cookies from "universal-cookie";
@@ -28,6 +28,7 @@ function PaymentsCard({
   image,
   SenderName,
   userRole,
+  afterFees,
 }) {
   return (
     <React.Fragment>
@@ -122,16 +123,34 @@ function PaymentsCard({
                 </span>
               </div>
             </div>
-            <div className="group flex min-w-0 flex-col">
-              <span className="tp-lead1 text-gray-300 transition duration-300">
-                Total price
-              </span>
-              <div className="flex items-center justify-start gap-x-2">
-                <span className="tp-h7 text-text-2 transition duration-300 ellipsis">
-                  {payPrice}$
+            {userRole === "C" ? (
+              <div className="group flex min-w-0 flex-col">
+                <span className="tp-lead1 text-gray-300 transition duration-300">
+                  Total price
                 </span>
+                <div className="flex items-center justify-start gap-x-2">
+                  <span className="tp-h7 text-text-2 transition duration-300 ellipsis">
+                    {payPrice}$
+                  </span>
+                </div>
               </div>
-            </div>
+            ) : (
+              ""
+            )}
+            {userRole === "R" ? (
+              <div className="group flex min-w-0 flex-col">
+                <span className="tp-lead1 text-gray-300 transition duration-300">
+                  Total price
+                </span>
+                <div className="flex items-center justify-start gap-x-2">
+                  <span className="tp-h7 text-text-2 transition duration-300 ellipsis">
+                    {afterFees}$
+                  </span>
+                </div>
+              </div>
+            ) : (
+              ""
+            )}
           </div>
         </div>
       </a>
@@ -168,9 +187,12 @@ function Payments() {
   const getPayments = async () => {
     setIsLoading(true);
     try {
-      const response = await axios.get(`${baseURL}/get_all_payments_mership`, {
-        withCredentials: true, // Include credentials (cookies) with the request
-      });
+      const response = await axios.get(
+        `${config.baseURL}/get_all_payments_mership`,
+        {
+          withCredentials: true, // Include credentials (cookies) with the request
+        }
+      );
       if (response.data !== "Something went wrong!") {
         setDelayedCard([]);
         setPayments(response.data.payments);
@@ -206,9 +228,12 @@ function Payments() {
   const dispatch = useDispatch();
   const getBlance = async () => {
     try {
-      const response = await axios.get(`${baseURL}/get_user_balance_mership`, {
-        withCredentials: true, // Include credentials (cookies) with the request
-      });
+      const response = await axios.get(
+        `${config.baseURL}/get_user_balance_mership`,
+        {
+          withCredentials: true, // Include credentials (cookies) with the request
+        }
+      );
       if (response.data !== "Something went wrong!") {
         dispatch(setBalance(response.data.balance));
       } else {
@@ -302,7 +327,7 @@ function Payments() {
     try {
       setIsLoading1(true);
       const response = await axios.post(
-        `${baseURL}/checout_balance`,
+        `${config.baseURL}/checout_balance`,
         { Price },
         {
           withCredentials: true, // Include credentials (cookies) with the request
@@ -431,7 +456,7 @@ function Payments() {
                 type="submit"
                 onClick={() =>
                   window.open(
-                    "https://discord.gg/U3WzTm2FHR",
+                    "https://discord.gg/KF6XBxczN6",
                     "_blank",
                     "noopener,noreferrer"
                   )
@@ -489,6 +514,7 @@ function Payments() {
                 payPrice={pay.paymentPrice}
                 userRole={UserRole}
                 SenderName={pay.SenderName}
+                afterFees={pay.priceAfterFees}
               />
             ))}
           </div>

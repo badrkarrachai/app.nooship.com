@@ -8439,6 +8439,13 @@ background-color: #f3f3f3;
   min-width: 250px;
   
 }
+.flexer12dd34{
+  flex: 1 1 0%;
+  display: flex;
+  flex-direction: column;
+  min-width: 250px;
+  
+}
 .iasdf7834{
   background-color: white;
   z-index: 9;
@@ -8467,6 +8474,15 @@ background-color: #f3f3f3;
   display: flex;
     align-items: center;
     justify-content: space-around;
+}
+.sdekjf23sdfs4{
+  list-style: none;
+  height: 100%;
+  overflow-y: auto;
+  position: absolute;
+  width: 100%;
+
+
 }
 .dsfg3456{
   height: 100% !important ;
@@ -8545,6 +8561,14 @@ background-color: #f3f3f3;
     display: flex;
     flex-direction: column;
     padding: 0 20px;
+    min-width: 250px;
+    min-height: 250px;
+  }
+  .flexer12dd34{
+    flex: 1 1 0%;
+    display: flex;
+    flex-direction: column;
+   
     min-width: 250px;
     min-height: 250px;
   }

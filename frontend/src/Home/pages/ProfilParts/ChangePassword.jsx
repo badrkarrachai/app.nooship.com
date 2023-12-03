@@ -6,7 +6,7 @@ import InputPulie from "../../Components/InputPulie";
 import Topbar from "../../topbar/topbar";
 import axios from "axios";
 import { ToastContainer, toast } from "react-toastify";
-import baseURL from "../../../config";
+import config from "../../../config";
 import { useNavigate } from "react-router-dom";
 import { Ring } from "@uiball/loaders";
 
@@ -60,7 +60,7 @@ function ChangePassword() {
       try {
         setIsLoading(true);
         const response = await axios.post(
-          `${baseURL}/update_user_password`,
+          `${config.baseURL}/update_user_password`,
           { password },
           {
             withCredentials: true, // Include credentials (cookies) with the request

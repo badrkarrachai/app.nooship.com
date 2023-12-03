@@ -184,10 +184,10 @@ app.post("/webhooks", async (req,res)=>{
             let amount = event.data.metadata.price;
             let userId = event.data.metadata.user_id;
             let notification = {title: "Payment successfully received",
-                                notification: `The payment you made with ${amount} USD has been successfully added to your wallet.`
-                                }
-            const sql = "UPDATE users SET Balance = Balance + ? WHERE Id = ? ; INSERT INTO `notifications`(`IdUser`, `TitleNotification`, `Notification`) VALUES (?,?,?) ; INSERT INTO `payments`(`idUser`, `Type`, `paymentPrice`) VALUES (?,?,?)"
-            db.query(sql,[amount,userId, userId,notification.title,notification.notification, userId,"Wallet",amount],(err,data)=>{
+                                notification: `The payment you made with <b>${amount}</b> USD has been successfully added to your wallet.`,
+                                ImageNotification:"https://capmership.s3.eu-north-1.amazonaws.com/Payment+Done.png"}
+            const sql = "UPDATE users SET Balance = Balance + ? WHERE Id = ? ; INSERT INTO `notifications`(`IdUser`, `TitleNotification`, `Notification`, `ImageNotification`) VALUES (?,?,?,?) ; INSERT INTO `payments`(`idUser`, `Type`, `paymentPrice`) VALUES (?,?,?)"
+            db.query(sql,[amount,userId, userId,notification.title,notification.notification,notification.ImageNotification, userId,"Wallet",amount],(err,data)=>{
                 if(err) return res.status(500).json({error: err})
             });
             
@@ -197,10 +197,10 @@ app.post("/webhooks", async (req,res)=>{
             let amount = event.data.metadata.price;
             let userId = event.data.metadata.user_id;
             let notification = {title: "Payment failed",
-                                notification: `The payment you made with ${amount} USD has been failed, please try again or call support for any issues.`
-                                }
-            const sql = "INSERT INTO `notifications`(`IdUser`, `TitleNotification`, `Notification`) VALUES (?,?,?)"
-            db.query(sql,[userId,notification.title,notification.notification],(err,data)=>{
+                                notification: `The payment you made with <b>${amount}</b> USD has been failed, please try again or call support for any issues.`,
+                                ImageNotification:"https://capmership.s3.eu-north-1.amazonaws.com/Payment+Failed.png"}
+            const sql = "INSERT INTO `notifications`(`IdUser`, `TitleNotification`, `Notification`, `ImageNotification`) VALUES (?,?,?,?)"
+            db.query(sql,[userId,notification.title,notification.notification,notification.ImageNotification],(err,data)=>{
                 if(err) return res.status(500).json({error: err})
             });
             
@@ -210,6 +210,61 @@ app.post("/webhooks", async (req,res)=>{
         return res.status(500).json({
             error: err
         })
+    }
+})
+
+//Get all notifications 
+app.get("/get_all_notifications", async (req,res)=>{
+    if(req.session.user){
+        const sql = "SELECT `idNotification`, `IdUser`, `ImageNotification`, `TitleNotification`, `Notification`, `DateNotification` FROM `notifications` WHERE `IdUser` = ?";
+
+        db.query(sql,[req.session.user.Id],(err,data)=>{
+            if(err) return res.json({Exist:false});
+            if(data.length > 0){
+                return res.json({Exist: true,message: data})
+            }else{
+                return res.json({Exist:false})
+            }
+        });
+
+    }
+})
+
+app.get("/get_all_notifications_count", async (req,res)=>{
+    if(req.session.user){
+        const sql = "SELECT COUNT(`idNotification`) AS notCount FROM `notifications` WHERE `IdUser` = ?";
+
+        db.query(sql,[req.session.user.Id],(err,data)=>{
+            if(err) return res.json({Exist:false});
+            return res.json({Exist:true , message: data[0].notCount});
+        });
+
+    }
+})
+
+//Get all notifications of user
+app.get("/delete_all_notifications", async (req,res)=>{
+    if(req.session.user){
+        const sql = "DELETE FROM `notifications` WHERE `IdUser` = ?";
+
+        db.query(sql,[req.session.user.Id],(err,data)=>{
+            if(err) return res.json({Done:false});
+            return res.json({Done:true});
+        });
+
+    }
+})
+
+//Get all notifications of user
+app.post("/delete_specific_notifications", async (req,res)=>{
+    if(req.session.user){
+        const sql = "DELETE FROM `notifications` WHERE `IdUser` = ? AND `idNotification` = ?";
+
+        db.query(sql,[req.session.user.Id,req.body.idNotification],(err,data)=>{
+            if(err) return res.json({Done:false});
+            return res.json({Done:true});
+        });
+
     }
 })
 
@@ -499,6 +554,15 @@ app.post("/AddExpectedParcelMership", async (req,res)=>{
         
     const sql = "INSERT INTO `orders`(`idUser`, `Id_Reshipper`, `Notes`, `Date_Expected`, `Name_on_Parcel`, `Quantity`, `Tracking_Number`, `Courier`, `Price`) VALUES (?,?,?,?,?,?,?,?,?)";
     if(req.session.user){ 
+        if(req.body.price > req.session.user.Balance ){
+            let notification = {title: "Insufficient funds",
+                                notification: `Your balance is insufficient for the <b>${req.body.nameOnParcel1}</b> package you're trying to add. We recommend adding more funds to your wallet.`,
+                                ImageNotification:"https://capmership.s3.eu-north-1.amazonaws.com/warning.png"}
+            const sql1 = "INSERT INTO `notifications`(`IdUser`, `TitleNotification`, `Notification`, `ImageNotification`) VALUES (?,?,?,?)"
+            db.query(sql1,[req.session.user.Id,notification.title,notification.notification,notification.ImageNotification],(err,data)=>{
+                if(err) return res.status(500).json({error: err})
+            });
+        }
     db.query(sql,[req.session.user.Id, req.body.IdRishipper, req.body.note, req.body.dateStatus, req.body.nameOnParcel1, req.body.quantity, req.body.trackingNumber1, req.body.courier1,req.body.price],(err,data)=>{
         if(err) return res.json("Something went wrong please try again later.");
         return res.json("Added");
@@ -627,6 +691,15 @@ app.post("/UpdateExpectParcelMership123", async (req,res)=>{
         
     const sql = "UPDATE `orders` SET `Id_Reshipper`= ? ,`Notes`= ?,`Date_Expected`= ?,`Name_on_Parcel`= ?,`Quantity`= ?,`Tracking_Number`= ?,`Courier`= ?,`Price`= ? WHERE `idUser` = ? AND `idOrder` = ?";
     if(req.session.user){ 
+        if(req.body.price > req.session.user.Balance ){
+            let notification = {title: "Insufficient funds",
+                                notification: `Your balance is insufficient for the <b>${req.body.nameOnParcel1}</b> package you're trying to update. We recommend adding more funds to your wallet.`,
+                                ImageNotification:"https://capmership.s3.eu-north-1.amazonaws.com/warning.png"}
+            const sql1 = "INSERT INTO `notifications`(`IdUser`, `TitleNotification`, `Notification`, `ImageNotification`) VALUES (?,?,?,?)"
+            db.query(sql1,[req.session.user.Id,notification.title,notification.notification,notification.ImageNotification],(err,data)=>{
+                if(err) return res.status(500).json({error: err})
+            });
+        }
     db.query(sql,[ req.body.IdRishipper, req.body.note, req.body.dateStatus, req.body.nameOnParcel1, req.body.quantity, req.body.trackingNumber1, req.body.courier1,req.body.price,req.session.user.Id,req.body.IdOrder],(err,data)=>{
         if(err) return res.json("Something went wrong please try again later.");
         return res.json("Added");
@@ -754,10 +827,10 @@ function get_balance(idUser) {
       });
     });
   }
-  function addPaymentRecord(idUser,idReshipper,idOrder,paymentPrice){
+  function addPaymentRecord(idUser,idReshipper,idOrder,paymentPrice,afterFees){
     return new Promise((resolve, reject) => {
-        const sql = "INSERT INTO `payments`( `idUser`, `idReshipper`, `idOrder`, `paymentPrice`) VALUES (?,?,?,?)" 
-        db.query(sql, [idUser,idReshipper,idOrder,paymentPrice], (err, data) => {
+        const sql = "INSERT INTO `payments`( `idUser`, `idReshipper`, `idOrder`, `paymentPrice`, `priceAfterFees`) VALUES (?,?,?,?,?)" 
+        db.query(sql, [idUser,idReshipper,idOrder,paymentPrice,afterFees], (err, data) => {
             if (err) {
                 reject("Something went wrong!");
             } else {
@@ -767,13 +840,35 @@ function get_balance(idUser) {
     });
   }
 
+//fees Calculate
+function calculateDiscountedPrice(originalPrice, discountPercentage) {
+    if (originalPrice < 0 || discountPercentage < 0 || discountPercentage > 100) {
+      console.error('Invalid input. Please provide valid values.');
+      return null;
+    }
+  
+    const discountAmount = (originalPrice * discountPercentage) / 100;
+    const discountedPrice = originalPrice - discountAmount;
+    const rest = originalPrice - discountedPrice;
+    return {rest,discountedPrice};
+  }
+
+  
+  
+  
+
 //Accept Parcel Reshipper
 
 app.post("/accept_parcel_mership2023", async (req,res)=>{
 
     const sql = "UPDATE `orders` SET `Accept_Status`= ? , `Date_Accept` = ? WHERE `idOrder` = ? AND  Id_Reshipper = ?;"
+    const sql1 = "INSERT INTO `totalprofit`( `idUser`, idOrder , `profitPrice`, `note`) VALUES (?,?,?,?)"
     
-    
+    const discountPercentage = parseFloat(process.env.PACKAGE_FEES);
+    const fees = calculateDiscountedPrice(req.body.packageFee, discountPercentage).rest;
+    const afterFees = calculateDiscountedPrice(req.body.packageFee, discountPercentage).discountedPrice;
+   
+ 
     if(req.session.user){
         const idUser = req.body.idUser;
         const packageFee = req.body.packageFee;
@@ -783,9 +878,13 @@ app.post("/accept_parcel_mership2023", async (req,res)=>{
                 cut_balance(balanceCustomer-packageFee,idUser).then(respo => {
                     if(respo ==="Done"){
                         get_balance(req.session.user.Id).then(balanceReshipper => {
-                            cut_balance(balanceReshipper+packageFee,req.session.user.Id).then(respo => {
-                                addPaymentRecord(idUser,req.session.user.Id,req.body.idParcel,packageFee).then(finalres =>{
+                            cut_balance(balanceReshipper+afterFees,req.session.user.Id).then(respo => {
+                                addPaymentRecord(idUser,req.session.user.Id,req.body.idParcel,packageFee,afterFees).then(finalres =>{
                                     if(finalres ==="Done"){
+                                        db.query(sql1,[req.session.user.Id, req.body.idParcel, fees, "Parcel payment" ],(err,data)=>{
+                                            if(err) return res.json("Something went wrong!");
+                                            
+                                        });
                                         db.query(sql,["True",req.body.currentDate,req.body.idParcel,req.session.user.Id],(err,data)=>{
                                             if(err) return res.json("Something went wrong!");
                                             return res.json("Done")
@@ -795,19 +894,27 @@ app.post("/accept_parcel_mership2023", async (req,res)=>{
                                     }
                                     
                                 }).catch(error => {
-                                    return res.json(error);
+                                    return res.json("Something went wrong!");
                                 });
                                 
-                            }).catch(err => {return res.json(error)})
+                            }).catch(err => {
+                                cut_balance(balanceCustomer+packageFee,idUser).then(respo => { 
+
+                                }).catch(err => {return res.json("Something went wrong!")})
+                                return res.json("Something went wrong!")
+                            })
                         })
                         .catch(error => {
-                            return res.json(error);
+                            cut_balance(balanceCustomer+packageFee,idUser).then(respo => { 
+                                    
+                                }).catch(err => {return res.json("Something went wrong!")})
+                                return res.json("Something went wrong!")
                         });
                         
                     }else{
                         return res.json("Something went wrong!")
                     }
-                }).catch(err => {return res.json(error)})
+                }).catch(err => {return res.json("Something went wrong!")})
                 
             }else{
                 return res.json("Customer balance is not enough")
@@ -949,7 +1056,7 @@ app.post("/update_status_order_mership", async (req,res)=>{
 
 app.get("/get_all_payments_mership", async (req,res)=>{
 
-    const sql = "SELECT orders.Name_on_Parcel, (SELECT  IFNULL(users.Image, '') AS Image FROM users WHERE users.Id = payments.idReshipper) AS ImageReshipper, (SELECT  IFNULL(users.Image, '') AS Image FROM users WHERE users.Id = payments.idUser) AS ImageCustomar, users.Country, users.AddressLine1, CONCAT(users.First_Name,' ',users.Last_Name) AS Receiver_name, (SELECT CONCAT(users.First_Name,' ',users.Last_Name) FROM users WHERE users.Id = payments.idUser)AS SenderName , orders.Quantity,payments.datePayment,payments.paymentPrice FROM `payments` JOIN orders ON payments.idOrder = orders.idOrder JOIN users ON payments.idReshipper = users.Id WHERE payments.idUser = ? OR payments.idReshipper = ? ;"
+    const sql = "SELECT IFNULL(orders.Name_on_Parcel, 'Order Deleted') AS Name_on_Parcel, (SELECT IFNULL(users.Image, '') FROM users WHERE users.Id = payments.idReshipper) AS ImageReshipper, (SELECT IFNULL(users.Image, '') FROM users WHERE users.Id = payments.idUser) AS ImageCustomar, users.Country, users.AddressLine1, CONCAT(users.First_Name,' ',users.Last_Name) AS Receiver_name, (SELECT CONCAT(users.First_Name,' ',users.Last_Name) FROM users WHERE users.Id = payments.idUser) AS SenderName, IFNULL(orders.Quantity, 0) AS Quantity, payments.datePayment, payments.paymentPrice, payments.priceAfterFees FROM `payments` LEFT JOIN orders ON payments.idOrder = orders.idOrder JOIN users ON payments.idReshipper = users.Id WHERE payments.idUser = ? OR payments.idReshipper = ?;"
     
     if(req.session.user){
         db.query(sql,[req.session.user.Id,req.session.user.Id], async(err,data)=>{
@@ -992,7 +1099,7 @@ app.get("/get_all_payments_mership", async (req,res)=>{
 
 app.get("/get_recent_payments_mership", async (req,res)=>{
 
-    const sql = "SELECT orders.Name_on_Parcel, (SELECT IFNULL(users.Image, '') AS Image FROM users WHERE users.Id = payments.idReshipper) AS ImageReshipper, (SELECT IFNULL(users.Image, '') AS Image FROM users WHERE users.Id = payments.idUser) AS ImageCustomar, users.Country, users.AddressLine1, CONCAT(users.First_Name,' ',users.Last_Name) AS Receiver_name, (SELECT CONCAT(users.First_Name,' ',users.Last_Name) FROM users WHERE users.Id = payments.idUser)AS SenderName , orders.Quantity,payments.datePayment,payments.paymentPrice FROM `payments` JOIN orders ON payments.idOrder = orders.idOrder JOIN users ON payments.idReshipper = users.Id WHERE (WEEK(payments.datePayment) = WEEK(CURDATE()) AND YEAR(payments.datePayment) = YEAR(CURDATE())) AND ( payments.idUser = ? OR payments.idReshipper = ? ) LIMIT 3;"
+    const sql = "SELECT orders.Name_on_Parcel, (SELECT IFNULL(users.Image, '') AS Image FROM users WHERE users.Id = payments.idReshipper) AS ImageReshipper, (SELECT IFNULL(users.Image, '') AS Image FROM users WHERE users.Id = payments.idUser) AS ImageCustomar, users.Country, users.AddressLine1, CONCAT(users.First_Name,' ',users.Last_Name) AS Receiver_name, (SELECT CONCAT(users.First_Name,' ',users.Last_Name) FROM users WHERE users.Id = payments.idUser)AS SenderName , orders.Quantity,payments.datePayment,payments.paymentPrice, payments.priceAfterFees FROM `payments` JOIN orders ON payments.idOrder = orders.idOrder JOIN users ON payments.idReshipper = users.Id WHERE (WEEK(payments.datePayment) = WEEK(CURDATE()) AND YEAR(payments.datePayment) = YEAR(CURDATE())) AND ( payments.idUser = ? OR payments.idReshipper = ? ) LIMIT 3;"
     
     if(req.session.user){
         db.query(sql,[req.session.user.Id,req.session.user.Id], async (err,data)=>{

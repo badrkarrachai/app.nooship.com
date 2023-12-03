@@ -13,7 +13,7 @@ import {
   setToNone,
 } from "../../../redux/RightBarStatus";
 import axios from "axios";
-import baseURL from "../../../config";
+import config from "../../../config";
 import { ToastContainer, toast } from "react-toastify";
 import { unsetSTadd } from "../../../redux/LoadingStataus";
 import { setUpdateExpParce } from "../../../redux/AreYouSure";
@@ -23,6 +23,7 @@ import {
   setUserRole,
 } from "../../../redux/UserBasicData";
 import { Ring } from "@uiball/loaders";
+import { setToActiveNotificationDot } from "../../../redux/NotificationbarStatus";
 
 function Rightbar() {
   const RightBarStatut = useSelector((state) => state.RightBarStatus.value);
@@ -56,7 +57,7 @@ function Rightbar() {
   const [trackingNumber, setTrackingNumber] = useState("");
   const [courier, setCourier] = useState("");
   const [promoCode, setPromoCode] = useState("");
-  const [price, setPrice] = useState(30);
+  const [price, setPrice] = useState(config.servicePrice);
   const [promoPrice, setPromoPrice] = useState(0);
 
   // Define error states for each note
@@ -79,7 +80,7 @@ function Rightbar() {
   const GetAddresses = async () => {
     try {
       const response = await axios.get(
-        `${baseURL}/get_climedaddress_For_Expected_delivery`,
+        `${config.baseURL}/get_climedaddress_For_Expected_delivery`,
         {
           withCredentials: true, // Include credentials (cookies) with the request
         }
@@ -99,10 +100,10 @@ function Rightbar() {
     }
   };
   useEffect(() => {
-    setPrice((price) => 30 * quantity - promoPrice);
+    setPrice((price) => config.servicePrice * quantity - promoPrice);
   }, [quantity]);
   function Defualt() {
-    setPrice(30);
+    setPrice(config.servicePrice);
     setPromoPrice(0);
     setClear((prevCount) => prevCount - 1);
     setAddressesValue("");
@@ -136,7 +137,7 @@ function Rightbar() {
     try {
       setIsLoading(true);
       const response = await axios.post(
-        baseURL + "/" + link,
+        config.baseURL + "/" + link,
         {
           IdRishipper,
           note,
@@ -206,6 +207,7 @@ function Rightbar() {
         theme: "colored",
       });
     } finally {
+      dispatch(setToActiveNotificationDot());
       setIsLoading(false); // Hide loading spinner
     }
   };
@@ -250,7 +252,7 @@ function Rightbar() {
     try {
       setIsLoading(true);
       const response = await axios.post(
-        `${baseURL}/update_status_order_mership`,
+        `${config.baseURL}/update_status_order_mership`,
         { IdOrder, Parcelimagelink, Status },
         {
           withCredentials: true, // Include credentials (cookies) with the request
@@ -370,7 +372,7 @@ function Rightbar() {
         setPromoCodeError("");
         try {
           const response = await axios.post(
-            `${baseURL}/ApplypromocodeMership2023`,
+            `${config.baseURL}/ApplypromocodeMership2023`,
             {
               promoCode,
             },
@@ -606,45 +608,52 @@ function Rightbar() {
                               />
                             </span>
                           </div>
-                          {(CominFromRightBar === "INV" && UserRole === "C") ||
-                          userIdOr === userIdParcel ? (
-                            <div className="flex flex-col col-span-12">
-                              <span className="tp-h7 mb-1 pl-1 text-gray-600">
-                                Parcel image link
-                              </span>
-                              <span
-                                className="tp-h7 mb-1 pl-1 text-gray-600"
-                                style={{ height: "52px" }}
-                              >
-                                <div
-                                  style={{
-                                    width: "470px",
-                                    height: "52px",
-                                    position: "absolute",
-                                    zIndex: "999",
-                                    cursor: "pointer",
-                                  }}
-                                  onClick={() => {
-                                    if (
-                                      Parcelimagelink.split(" ").join("") !== ""
-                                    ) {
-                                      window.open(
-                                        Parcelimagelink,
-                                        "_blank",
-                                        "noopener,noreferrer"
-                                      );
-                                    }
-                                  }}
-                                ></div>
-                                <InputPulie
-                                  isInputDisabled={true}
-                                  valController={Parcelimagelink}
-                                  maxLen={"300"}
-                                />
-                              </span>
+                          {userIdOr === userIdParcel ? (
+                            <>
+                              {CominFromRightBar === "INV" ? (
+                                <div className="flex flex-col col-span-12">
+                                  <span className="tp-h7 mb-1 pl-1 text-gray-600">
+                                    Parcel image link
+                                  </span>
+                                  <span
+                                    className="tp-h7 mb-1 pl-1 text-gray-600"
+                                    style={{ height: "52px" }}
+                                  >
+                                    <div
+                                      style={{
+                                        width: "470px",
+                                        height: "52px",
+                                        position: "absolute",
+                                        zIndex: "999",
+                                        cursor: "pointer",
+                                      }}
+                                      onClick={() => {
+                                        if (
+                                          Parcelimagelink.split(" ").join(
+                                            ""
+                                          ) !== ""
+                                        ) {
+                                          window.open(
+                                            Parcelimagelink,
+                                            "_blank",
+                                            "noopener,noreferrer"
+                                          );
+                                        }
+                                      }}
+                                    ></div>
+                                    <InputPulie
+                                      isInputDisabled={true}
+                                      valController={Parcelimagelink}
+                                      maxLen={"300"}
+                                    />
+                                  </span>
 
-                              <span className="flex opacity-0 h-4 transition-all duration-200 -z-10 -mt-4 ml-1 text-error-standard tp-body2"></span>
-                            </div>
+                                  <span className="flex opacity-0 h-4 transition-all duration-200 -z-10 -mt-4 ml-1 text-error-standard tp-body2"></span>
+                                </div>
+                              ) : (
+                                ""
+                              )}
+                            </>
                           ) : (
                             ""
                           )}

@@ -3,7 +3,7 @@ import { useState } from "react";
 import "../App.css";
 import InputPulie from "../Home/Components/InputPulie";
 import { Navigate, useNavigate } from "react-router-dom";
-import baseURL from "../config";
+import config from "../config";
 import axios from "axios";
 import { useDispatch } from "react-redux";
 import { setPage } from "../redux/AuthData";
@@ -56,7 +56,7 @@ function ForgotPass() {
       email.split(" ").join("") !== ""
     ) {
       await axios
-        .post(`${baseURL}/sendVerCodeAndGetCode`, { email, firstName1 })
+        .post(`${config.baseURL}/sendVerCodeAndGetCode`, { email, firstName1 })
         .then((res) => {
           if (res.data.Sent) {
             dispatch(setVer(res.data.verCode));
@@ -72,7 +72,7 @@ function ForgotPass() {
       const email2 = validateEmail(Email).message;
       setIsLoading(true);
       await axios
-        .post(`${baseURL}/email_is_excite`, { email2 })
+        .post(`${config.baseURL}/email_is_excite`, { email2 })
         .then((res) => {
           if (res.data.Exist) {
             SendVerCode(email2, res.data.firstName);

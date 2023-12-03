@@ -18,7 +18,7 @@ import {
   setToActive,
 } from "../../redux/RightBarStatus";
 import axios from "axios";
-import baseURL from "../../config";
+import config from "../../config";
 import MessageSure from "../Components/MessageSure";
 import { setAreSure } from "../../redux/LoadingStataus";
 import {
@@ -63,7 +63,7 @@ function ExpCard({
   const LissnerDelete = async () => {
     try {
       const response = await axios.post(
-        `${baseURL}/DeleteExpectedParcelMership123`,
+        `${config.baseURL}/DeleteExpectedParcelMership123`,
         { idParcel },
         {
           withCredentials: true, // Include credentials (cookies) with the request
@@ -91,7 +91,7 @@ function ExpCard({
       }
       const currentDate = formatDateToYYYYMMDD(new Date());
       const response = await axios.post(
-        `${baseURL}/accept_parcel_mership2023`,
+        `${config.baseURL}/accept_parcel_mership2023`,
         { idParcel, currentDate, idUser, packageFee },
         {
           withCredentials: true, // Include credentials (cookies) with the request
@@ -420,7 +420,7 @@ function ExpectedDelivery() {
     try {
       setIsLoading(true);
       const response = await axios.post(
-        `${baseURL}/get_allExpectedParcels`,
+        `${config.baseURL}/get_allExpectedParcels`,
         { filter },
         {
           withCredentials: true, // Include credentials (cookies) with the request

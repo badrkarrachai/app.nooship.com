@@ -19,6 +19,21 @@ export const NotificationBarStatusSlice = createSlice({
     },
   },
 });
+export const NotificationDotStatusSlice = createSlice({
+  name: "NotificationDotStatus",
+  initialState,
+  reducers: {
+    setToActiveNotificationDot: (state, action) => {
+      state.value = "true";
+    },
+    setToInActiveNotificationDot: (state, action) => {
+      state.value = "none";
+    },
+  },
+});
+
+export const { setToActiveNotificationDot, setToInActiveNotificationDot } =
+  NotificationDotStatusSlice.actions;
 
 export const {
   setToActiveNotification,
@@ -27,3 +42,5 @@ export const {
 } = NotificationBarStatusSlice.actions;
 
 export const NotificationBarStatusReducer = NotificationBarStatusSlice.reducer;
+
+export const NotificationDotStatusReducer = NotificationDotStatusSlice.reducer;

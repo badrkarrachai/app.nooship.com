@@ -7,7 +7,7 @@ import { Navigate, useNavigate } from "react-router-dom";
 import Checkbox from "@mui/material/Checkbox";
 import { useDispatch } from "react-redux";
 import { IoMdArrowBack } from "react-icons/io";
-import baseURL from "../config";
+import config from "../config";
 import axios from "axios";
 import { useSelector } from "react-redux";
 import { setVer, restVer } from "../redux/VerficationCode";
@@ -329,7 +329,10 @@ function Register() {
 
       async function sendAndGetVer() {
         await axios
-          .post(`${baseURL}/sendVerCodeAndGetCode`, { email, firstName1 })
+          .post(`${config.baseURL}/sendVerCodeAndGetCode`, {
+            email,
+            firstName1,
+          })
           .then((res) => {
             if (res.data.Sent) {
               dispatch(setVer(res.data.verCode));
@@ -353,7 +356,7 @@ function Register() {
       }
       setIsLoading(true);
       await axios
-        .post(`${baseURL}/email_is_excite`, { email2 })
+        .post(`${config.baseURL}/email_is_excite`, { email2 })
         .then((res) => {
           if (res.data.Exist) {
             setEmailError(" ");

@@ -12,7 +12,7 @@ import { useNavigate } from "react-router-dom";
 import Cookies from "universal-cookie";
 import { useDispatch, useSelector } from "react-redux";
 import { setProfileUpdateIndecator } from "../../redux/ProfileUpdateIndicator";
-import baseURL from "../../config";
+import config from "../../config";
 import axios from "axios";
 import { ToastContainer, toast } from "react-toastify";
 import countryData from "../../data/countries";
@@ -31,6 +31,7 @@ function PaymentsCard({
   image,
   SenderName,
   userRole,
+  afterFees,
 }) {
   return (
     <React.Fragment>
@@ -125,16 +126,34 @@ function PaymentsCard({
                 </span>
               </div>
             </div>
-            <div className="group flex min-w-0 flex-col">
-              <span className="tp-lead1 text-gray-300 transition duration-300">
-                Total price
-              </span>
-              <div className="flex items-center justify-start gap-x-2">
-                <span className="tp-h7 text-text-2 transition duration-300 ellipsis">
-                  {payPrice}$
+            {userRole === "C" ? (
+              <div className="group flex min-w-0 flex-col">
+                <span className="tp-lead1 text-gray-300 transition duration-300">
+                  Total price
                 </span>
+                <div className="flex items-center justify-start gap-x-2">
+                  <span className="tp-h7 text-text-2 transition duration-300 ellipsis">
+                    {payPrice}$
+                  </span>
+                </div>
               </div>
-            </div>
+            ) : (
+              ""
+            )}
+            {userRole === "R" ? (
+              <div className="group flex min-w-0 flex-col">
+                <span className="tp-lead1 text-gray-300 transition duration-300">
+                  Total price
+                </span>
+                <div className="flex items-center justify-start gap-x-2">
+                  <span className="tp-h7 text-text-2 transition duration-300 ellipsis">
+                    {afterFees}$
+                  </span>
+                </div>
+              </div>
+            ) : (
+              ""
+            )}
           </div>
         </div>
       </a>
@@ -172,9 +191,12 @@ const Dashboard = () => {
 
   const getDataFromServer = async () => {
     try {
-      const response = await axios.get(`${baseURL}/get_user_data_Mership`, {
-        withCredentials: true, // Include credentials (cookies) with the request
-      });
+      const response = await axios.get(
+        `${config.baseURL}/get_user_data_Mership`,
+        {
+          withCredentials: true, // Include credentials (cookies) with the request
+        }
+      );
 
       if (response.data.status === true) {
         let userData = response.data.message;
@@ -212,7 +234,7 @@ const Dashboard = () => {
   const getPendingExpectedParcelsCount = async () => {
     try {
       const response = await axios.get(
-        `${baseURL}/get_count_expected_parcels`,
+        `${config.baseURL}/get_count_expected_parcels`,
         {
           withCredentials: true, // Include credentials (cookies) with the request
         }
@@ -233,9 +255,12 @@ const Dashboard = () => {
       });
     }
     try {
-      const response = await axios.get(`${baseURL}/get_count_inventory`, {
-        withCredentials: true, // Include credentials (cookies) with the request
-      });
+      const response = await axios.get(
+        `${config.baseURL}/get_count_inventory`,
+        {
+          withCredentials: true, // Include credentials (cookies) with the request
+        }
+      );
       if (response.data.status === true) {
         setInvparcelsCount(response.data.message.ExpCount);
       }
@@ -252,9 +277,12 @@ const Dashboard = () => {
       });
     }
     try {
-      const response = await axios.get(`${baseURL}/get_count_inv_reshipped`, {
-        withCredentials: true, // Include credentials (cookies) with the request
-      });
+      const response = await axios.get(
+        `${config.baseURL}/get_count_inv_reshipped`,
+        {
+          withCredentials: true, // Include credentials (cookies) with the request
+        }
+      );
       if (response.data.status === true) {
         setReshippedparceles(response.data.message.ExpCount);
       }
@@ -279,7 +307,7 @@ const Dashboard = () => {
     setIsLoading(true);
     try {
       const response = await axios.get(
-        `${baseURL}/get_recent_payments_mership`,
+        `${config.baseURL}/get_recent_payments_mership`,
         {
           withCredentials: true, // Include credentials (cookies) with the request
         }
@@ -641,6 +669,7 @@ const Dashboard = () => {
                   payPrice={pay.paymentPrice}
                   userRole={UserRole}
                   SenderName={pay.SenderName}
+                  afterFees={pay.priceAfterFees}
                 />
               ))}
             </div>

@@ -5,7 +5,7 @@ import InputPulie from "../Home/Components/InputPulie";
 import { Navigate, useNavigate } from "react-router-dom";
 import { useSelector } from "react-redux";
 import { setPage } from "../redux/AuthData";
-import baseURL from "../config";
+import config from "../config";
 import axios from "axios";
 import { ToastContainer, toast } from "react-toastify";
 import { Ring } from "@uiball/loaders";
@@ -72,7 +72,7 @@ function ConfirmPass() {
         const Email = localStorage.getItem("Email");
         setIsLoading(true);
         await axios
-          .post(`${baseURL}/UpdatepasswordMership2355423`, {
+          .post(`${config.baseURL}/UpdatepasswordMership2355423`, {
             password,
             Email,
           })

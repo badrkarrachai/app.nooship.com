@@ -3,7 +3,7 @@ import Topbar from "../topbar/topbar";
 import { AiOutlineClose } from "react-icons/ai";
 import { FiBookmark } from "react-icons/fi";
 import { Link, useNavigate } from "react-router-dom";
-import baseURL from "../../config";
+import config from "../../config";
 import axios from "axios";
 import countryData from "../../data/countries";
 import { ToastContainer, toast } from "react-toastify";
@@ -235,9 +235,12 @@ function Addresses() {
   async function getAdd() {
     try {
       setIsLoading(true);
-      const response = await axios.get(`${baseURL}/get_unclimedaddress`, {
-        withCredentials: true, // Include credentials (cookies) with the request
-      });
+      const response = await axios.get(
+        `${config.baseURL}/get_unclimedaddress`,
+        {
+          withCredentials: true, // Include credentials (cookies) with the request
+        }
+      );
       setDelayedAddresses([]);
       setAddresses([]);
       setAddresses(response.data.addresses);
@@ -250,7 +253,7 @@ function Addresses() {
   async function getAddClim() {
     try {
       setIsLoading(true);
-      const response = await axios.get(`${baseURL}/get_climedaddress`, {
+      const response = await axios.get(`${config.baseURL}/get_climedaddress`, {
         withCredentials: true, // Include credentials (cookies) with the request
       });
       setDelayedAddresses1([]);
@@ -271,7 +274,7 @@ function Addresses() {
   async function ClimeAdrress(IdRishipper) {
     try {
       const response = await axios.post(
-        `${baseURL}/ClaimeAddressMership`,
+        `${config.baseURL}/ClaimeAddressMership`,
         { IdRishipper },
         {
           withCredentials: true, // Include credentials (cookies) with the request
@@ -310,7 +313,7 @@ function Addresses() {
   async function UnclimeAdress(IdRishipper) {
     try {
       const response = await axios.post(
-        `${baseURL}/RemoveSpesificAddressFromCliemed`,
+        `${config.baseURL}/RemoveSpesificAddressFromCliemed`,
         { IdRishipper },
         {
           withCredentials: true, // Include credentials (cookies) with the request

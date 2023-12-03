@@ -1,14 +1,14 @@
 import axios from "axios";
 import React from "react";
 import { useNavigate } from "react-router-dom";
-import baseURL from "../../../config";
+import config from "../../../config";
 import Cookies from "universal-cookie";
 function Lougout({ logoutStatut }) {
   const navigate = useNavigate();
   const cookies = new Cookies();
   const logOut = async () => {
     await axios
-      .get(`${baseURL}/logout`, { withCredentials: true }) // Send cookies with the request
+      .get(`${config.baseURL}/logout`, { withCredentials: true }) // Send cookies with the request
       .then((response) => {
         const { logged } = response.data;
         localStorage.setItem("LogStatus", logged);

@@ -1,7 +1,7 @@
 import axios from "axios";
 import React, { useEffect } from "react";
 import { Navigate, Outlet, useNavigate } from "react-router-dom";
-import baseURL from "../config";
+import config from "../config";
 
 export default function AuthProvider() {
   let isAuth = localStorage.getItem("LogStatus");
@@ -9,7 +9,7 @@ export default function AuthProvider() {
   useEffect(() => {
     // Make an API request to check authentication status
     axios
-      .get(`${baseURL}/isLogged`, { withCredentials: true }) // Send cookies with the request
+      .get(`${config.baseURL}/isLogged`, { withCredentials: true }) // Send cookies with the request
       .then((response) => {
         const logged = response.data.logged;
         localStorage.setItem("LogStatus", logged);

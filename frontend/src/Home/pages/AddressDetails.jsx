@@ -5,7 +5,7 @@ import Topbar from "../topbar/topbar";
 import { useState } from "react";
 import { useSelector } from "react-redux";
 import axios from "axios";
-import baseURL from "../../config";
+import config from "../../config";
 import { CopyToClipboard } from "react-copy-to-clipboard";
 import { ToastContainer, toast } from "react-toastify";
 
@@ -42,7 +42,7 @@ function AddressDetails() {
       }
       let ReshipperIdv = localStorage.getItem("Reshipper");
       const response = await axios.post(
-        `${baseURL}/get_Spesific_Reshipper`,
+        `${config.baseURL}/get_Spesific_Reshipper`,
         { ReshipperIdv },
         {
           withCredentials: true, // Include credentials (cookies) with the request

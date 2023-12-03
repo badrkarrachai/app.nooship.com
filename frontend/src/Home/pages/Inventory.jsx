@@ -16,7 +16,7 @@ import {
   setToActive,
 } from "../../redux/RightBarStatus";
 import axios from "axios";
-import baseURL from "../../config";
+import config from "../../config";
 
 import { setDataAreYouSure, setUpdateExpParce } from "../../redux/AreYouSure";
 import { Ring } from "@uiball/loaders";
@@ -53,7 +53,7 @@ function InvCard({
   const LissnerAccept = async () => {
     try {
       const response = await axios.post(
-        `${baseURL}/unaccept_parcel_mership2023`,
+        `${config.baseURL}/unaccept_parcel_mership2023`,
         { idParcel },
         {
           withCredentials: true, // Include credentials (cookies) with the request
@@ -382,7 +382,7 @@ function Inventory() {
     try {
       setIsLoading(true);
       const response = await axios.post(
-        `${baseURL}/get_allInventoryParcels`,
+        `${config.baseURL}/get_allInventoryParcels`,
         { filter, Comingstatus },
         {
           withCredentials: true, // Include credentials (cookies) with the request

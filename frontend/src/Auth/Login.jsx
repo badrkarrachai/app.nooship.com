@@ -5,7 +5,7 @@ import InputPulie from "../Home/Components/InputPulie";
 import axios from "axios";
 
 import { Navigate, useNavigate } from "react-router-dom";
-import baseURL from "../config";
+import config from "../config";
 import { useDispatch, useSelector } from "react-redux";
 import { setLoadingFalse } from "../redux/LoadingStataus";
 import Cookies from "universal-cookie";
@@ -48,7 +48,7 @@ function Login() {
       setIsLoading(true);
       try {
         const response = await axios.post(
-          `${baseURL}/login`,
+          `${config.baseURL}/login`,
           {
             ReadyEmail,
             password,
